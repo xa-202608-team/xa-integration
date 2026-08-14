@@ -1,0 +1,8 @@
+components/
+build/
+outputs/
+.private/
+.env
+.env.*
+__pycache__/
+.pytest_cache/
