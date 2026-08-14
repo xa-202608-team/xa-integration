@@ -34,5 +34,12 @@ components:
     allow: [pa_data_flow.png]
     deny: []
   wheel:
-    allow: [release/**, entrypoint.sh, requirements.unified.lock]
-    deny: [release/data/**, release/checkpoints/**, release/results/**]
+    allow: [release/**, entrypoint.sh, requirements.unified.lock, PROGRESS.md]
+    deny:
+      [
+        release/data/**,
+        release/checkpoints/**,
+        release/results/**,
+        release/docs/handoff/project_inventory.json,
+        release/docs/handoff/project_inventory.csv,
+      ]
