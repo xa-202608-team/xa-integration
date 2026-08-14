@@ -1,3 +1,5 @@
+# 本地虚拟环境（仅开发/测试，非交付物）
+.venv/
 components/
 build/
 outputs/

@@ -1,0 +1,38 @@
+version: 1
+common_allow:
+  - src/**
+  - configs/**
+  - scripts/**
+  - tests/**
+  - docs/**
+  - Dockerfile
+  - .dockerignore
+  - requirements*.txt
+  - requirements*.lock
+  - pytest.ini
+  - README*.md
+  - RUN.md
+  - INPUT_SCHEMA.md
+  - PROVENANCE.md
+  - DATA_REQUIREMENTS.md
+common_deny:
+  - '**/__pycache__/**'
+  - '**/.pytest_cache/**'
+  - '**/*.pyc'
+  - '**/*.log'
+  - data/**
+  - results/**
+  - checkpoints/**
+  - '**/*.pt'
+  - '**/*.pth'
+  - '**/*.ckpt'
+components:
+  battery:
+    allow: [reference/**]
+    deny: [reference/data/**, reference/models/**, reference/results/**]
+  phased_array:
+    allow: [pa_data_flow.png]
+    deny: []
+  wheel:
+    allow: [release/**, entrypoint.sh, requirements.unified.lock]
+    deny: [release/data/**, release/checkpoints/**, release/results/**]
