@@ -12,7 +12,7 @@
 | xa-wheel | Admin | — | — | Write |
 | xa-integration | Admin | — | — | — |
 
-各仓库均为私有仓库，权限通过 team 协作组授予，具体如下：
+各仓库均为私有仓库（2026-08-14 起五仓库已转 public，见文末"可见性变更"节），权限通过 team 协作组授予，具体如下：
 
 - **contract**：`@xa-202608-team/integrators` Admin；battery / phased-array / wheel 三位负责人 Read（只读公共契约）。
 - **xa-battery**：`@xa-202608-team/integrators` Admin；battery 负责人 Write。
