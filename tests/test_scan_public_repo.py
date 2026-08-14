@@ -14,6 +14,7 @@ if str(REPO_ROOT) not in sys.path:
 import pytest  # noqa: E402
 
 from tools.scan_public_repo import (  # noqa: E402
+    SLOT_DESC_FILES,
     Violation,
     main,
     scan_tree,
@@ -246,6 +247,66 @@ def test_allowlist_does_not_cover_real_data(tmp_path):
     (tmp_path / "data" / "fixture.csv").write_text("v\n", encoding="utf-8")
     _stage(tmp_path, "data/fixture.csv")
     assert _find(scan_tree(tmp_path), "artifact-data-dir") is not None
+
+
+# ---------------------------------------------------------------------------
+# 槽位描述文件豁免：仅免于 artifact-data-dir 目录规则，内容规则仍然生效
+# ---------------------------------------------------------------------------
+
+# 设计批准的 7 个槽位描述文件（与组件仓库边界测试的批准集合一致）
+SLOT_DESC_FILES_EXPECTED = (
+    "data/README.md",
+    "data/data_manifest.json",
+    "results/README.md",
+    "results/public_summary.json",
+    "results/expected_metrics.json",
+    "checkpoints/README.md",
+    "checkpoints/checkpoint_manifest.json",
+)
+
+
+def test_slot_desc_file_set_matches_design():
+    # 锁定豁免集合与设计批准集合一致（双向：不多、不少）
+    assert SLOT_DESC_FILES == frozenset(SLOT_DESC_FILES_EXPECTED)
+
+
+def test_tracked_slot_desc_files_not_critical(tmp_path):
+    # (a) 7 个槽位描述文件 tracked 不再触发 artifact-data-dir CRITICAL
+    _init_git(tmp_path)
+    for rel in SLOT_DESC_FILES_EXPECTED:
+        f = tmp_path / rel
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text("# slot\n", encoding="utf-8")
+        _stage(tmp_path, rel)
+    violations = scan_tree(tmp_path)
+    assert not any(
+        v.rule == "artifact-data-dir"
+        and v.relative.as_posix() in SLOT_DESC_FILES_EXPECTED
+        for v in violations
+    )
+    assert main(["--root", str(tmp_path)]) == 0
+
+
+def test_slot_desc_file_with_token_still_critical(tmp_path):
+    # (b) 豁免不覆盖内容规则：槽位文件内含 Token 仍报 CRITICAL
+    _init_git(tmp_path)
+    f = tmp_path / "data" / "README.md"
+    f.parent.mkdir(parents=True)
+    f.write_text("example = " + repr(_github_token()) + "\n", encoding="utf-8")
+    _stage(tmp_path, "data/README.md")
+    v = _find(scan_tree(tmp_path), "github-token")
+    assert v is not None and v.severity == "CRITICAL"
+    assert main(["--root", str(tmp_path)]) == 1
+
+
+def test_non_slot_file_in_data_dir_still_critical(tmp_path):
+    # (c) 豁免仅限批准路径：data/other.md 仍触发 artifact-data-dir
+    _init_git(tmp_path)
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "other.md").write_text("x\n", encoding="utf-8")
+    _stage(tmp_path, "data/other.md")
+    v = _find(scan_tree(tmp_path), "artifact-data-dir")
+    assert v is not None and v.severity == "CRITICAL"
 
 
 # ---------------------------------------------------------------------------
