@@ -176,9 +176,16 @@ def ensure_within_destination(destination_root: Path, relative: Path) -> Path:
     """
     root_resolved = Path(destination_root).resolve()
     rel_posix = Path(relative).as_posix()
+    first_segment = rel_posix.split("/", 1)[0]
     if rel_posix in ("", ".") or rel_posix.startswith("../"):
         raise ValueError(f"relative path escapes or targets the repo root: {rel_posix!r}")
-    if Path(rel_posix).is_absolute():
+    if (
+        rel_posix.startswith("/")
+        or Path(rel_posix).is_absolute()
+        # Windows 盘符段（如 C:）在 POSIX 上不是绝对路径，需显式拒绝，
+        # 否则跨平台判定会被绕过
+        or (len(first_segment) == 2 and first_segment.endswith(":"))
+    ):
         raise ValueError(f"relative path must not be absolute: {rel_posix!r}")
     target = (root_resolved / relative).resolve()
     if target == root_resolved or root_resolved not in target.parents:
