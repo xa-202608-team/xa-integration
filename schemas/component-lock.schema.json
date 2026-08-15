@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/xa-202608-team/xa-integration/main/schemas/component-lock.schema.json",
+  "title": "XA-202608 component lock",
+  "description": "组件版本锁：契约与三组件仓库的精确 Tag/Commit 锁定，以及已验证 RC 工件（ZIP）的 SHA256。提交一律 40 位小写十六进制，工件哈希一律 64 位小写十六进制，所有对象 additionalProperties=false。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_at", "contract", "components"],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "generated_at": {
+      "type": "string",
+      "minLength": 1,
+      "description": "锁文件生成时刻（RFC 3339 / UTC，如 2026-08-15T00:00:00Z）。"
+    },
+    "contract": {
+      "$ref": "#/$defs/contractEntry"
+    },
+    "components": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["battery", "phased_array", "wheel"],
+      "properties": {
+        "battery": { "$ref": "#/$defs/componentEntry" },
+        "phased_array": { "$ref": "#/$defs/componentEntry" },
+        "wheel": { "$ref": "#/$defs/componentEntry" }
+      }
+    }
+  },
+  "$defs": {
+    "contractEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "tag", "commit"],
+      "properties": {
+        "repository": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tag": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      }
+    },
+    "componentEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "tag", "commit", "artifact", "artifact_sha256"],
+      "properties": {
+        "repository": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tag": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "artifact": {
+          "type": "string",
+          "minLength": 1,
+          "description": "已验证 RC 工件（ZIP）文件名。"
+        },
+        "artifact_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  }
+}
