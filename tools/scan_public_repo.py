@@ -8,6 +8,10 @@
 - 检测到任何严重项（CRITICAL/HIGH）时退出码 1；
 - 允许列表只包含设计批准的槽位描述文件（config/*.schema.json）与测试
   fixture（tests/fixtures/**），且仅豁免内容类规则，不豁免文件名/产物规则；
+- 槽位描述文件豁免（SLOT_DESC_FILES）：data/results/checkpoints 根目录下
+  设计批准的 7 个槽位描述文件仅豁免 artifact-data-dir 目录规则——豁免的是
+  "出现在产物目录"这一事实而非文件内容，秘密扫描等内容类规则与其余路径
+  规则仍然生效；
 - 被 .gitignore 忽略且未跟踪的文件不会进入公开仓库，工作树扫描跳过；
   已跟踪文件不受 .gitignore 影响，仍按 git-index 检查。
 """
@@ -78,6 +82,22 @@ CONTENT_RULES: tuple[tuple[str, "re.Pattern[str]", str], ...] = (
 ALLOWED_EXCEPTION_PATTERNS: tuple[str, ...] = (
     "tests/fixtures/**",   # 设计批准的测试 fixture（微型、无真实数据）
     "config/*.schema.json",  # 设计批准的槽位描述文件（JSON Schema）
+)
+
+# 槽位描述文件豁免：与组件仓库边界测试的批准集合一致。
+# 仅豁免 artifact-data-dir 目录规则——豁免的是"出现在 data/results/checkpoints
+# 根目录"这一事实，不是文件内容；内容类规则（秘密扫描、绝对路径等）与
+# 其余路径规则（后缀黑名单、.env、私有目录）仍然生效。
+SLOT_DESC_FILES: frozenset[str] = frozenset(
+    {
+        "data/README.md",
+        "data/data_manifest.json",
+        "results/README.md",
+        "results/public_summary.json",
+        "results/expected_metrics.json",
+        "checkpoints/README.md",
+        "checkpoints/checkpoint_manifest.json",
+    }
 )
 
 
@@ -168,6 +188,8 @@ def _is_ignored(rel_posix: str, compiled: list[str]) -> bool:
 
 def _check_path_rules(rel_posix: str, size: int, origin: str, out: list[Violation]) -> None:
     for rule, patterns, severity in PATH_RULES:
+        if rule == "artifact-data-dir" and rel_posix in SLOT_DESC_FILES:
+            continue  # 槽位描述文件仅豁免目录规则；内容与其余路径规则不豁免
         if any(match_glob(p, rel_posix) for p in patterns):
             out.append(Violation(rule, Path(rel_posix), size, severity, origin))
             break
