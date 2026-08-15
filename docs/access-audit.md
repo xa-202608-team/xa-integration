@@ -30,3 +30,17 @@
 - **降级处理**：battery 行与 wheel 行降级为"结果经总负责人转述确认，未经本人账号独立验证"。
 - **验收前提**：两位负责人接受组织邀请（https://github.com/orgs/xa-202608-team/invitation）加入对应团队后，须执行一次写边界复测——各自对无写权限仓库尝试 push 应被拒、对本组件仓库 push 走 PR 流程验证——结果落表后，方可视为访问边界验收完成；phased-array 行的 Owner 暂代局限同时复测，并一并澄清该行 DENIED 值的产生方式。
 - 本节不记录任何密码、令牌或私人联系方式。
+
+## 写授权操作记录（2026-08-15）
+
+执行者：总集成侧（codex，经用户授权的 XA-202608 Task 8 第二批操作）。三组授权操作如下：
+
+| 目标仓库 | 账号 | 操作 | 结果核实 |
+|---|---|---|---|
+| xa-battery | yclpig | `PUT repos/xa-202608-team/xa-battery/collaborators/yclpig` `permission=push` | GET `.../collaborators/yclpig/permission` 返回 `permission=="write"`、`role_name=="write"`；已列于 push 级 collaborator 列表；仓库 invitations 为空 |
+| xa-wheel | ABeginner-op | `PUT repos/xa-202608-team/xa-wheel/collaborators/ABeginner-op` `permission=push` | GET `.../collaborators/ABeginner-op/permission` 返回 `permission=="write"`、`role_name=="write"`；已列于 push 级 collaborator 列表；仓库 invitations 为空 |
+| xa-phased-array | （Black-Chan） | **跳过授权**：Black-Chan 为组织 Owner（Admin > push），兼任阶段无需另授 collaborator Write | 待指定相控阵专人后补授 Write 并复测；本变体经用户批准 |
+
+- 授权时点两位负责人均已是有效 collaborator（PUT 返回无邀请体），不存在 PENDING_INVITATION 状态；若后续出现邀请未接受（PENDING_INVITATION）情形，应如实记录为"已发出邀请、权限未生效"，不得记为已具备。
+- 2026-08-14 节所述"组织邀请 pending"状态截至本次授权已不成立：yclpig 与 ABeginner-op 的仓库级写权限已直接生效，二人可对本组件仓库走 PR 流程推送。
+- 本节不记录任何密码、令牌或私人联系方式；文中用户名均为 GitHub 公开账号名。
