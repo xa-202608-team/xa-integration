@@ -1,0 +1,5 @@
+timestamp,component_id,component_type,condition_id,telemetry_name,value,unit
+2026-08-15T00:00:00Z,battery_000,battery,c01,voltage,3.72,V
+2026-08-15T00:10:00Z,battery_000,battery,c01,voltage,3.71,V
+2026-08-15T00:20:00Z,battery_000,battery,c01,voltage,3.69,V
+2026-08-15T00:30:00Z,battery_000,battery,c01,voltage,3.66,V

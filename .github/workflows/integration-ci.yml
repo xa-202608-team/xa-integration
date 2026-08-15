@@ -26,6 +26,9 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements-dev.lock
 
+      - name: Run RC artifact tool tests
+        run: python -m pytest tests/test_build_rc_artifact.py tests/test_verify_rc_artifact.py -q
+
       - name: Run tool tests
         run: python -m pytest -q
 

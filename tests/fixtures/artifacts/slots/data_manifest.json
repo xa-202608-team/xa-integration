@@ -1,0 +1,14 @@
+{
+  "slot": "data",
+  "status": "SOURCES_VERIFIED",
+  "files": [
+    {
+      "path": "data_manifest.json",
+      "note": "synthetic fixture for RC artifact tool tests"
+    },
+    {
+      "path": "telemetry.csv",
+      "note": "synthetic telemetry rows for RC artifact tool tests"
+    }
+  ]
+}

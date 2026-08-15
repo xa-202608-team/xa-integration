@@ -1,0 +1,8 @@
+{
+  "run_id": "rc-artifact-tool-fixture",
+  "source_mode": "synthetic",
+  "metrics": {
+    "rmse": 0.0,
+    "status": "FIXTURE_ONLY"
+  }
+}
