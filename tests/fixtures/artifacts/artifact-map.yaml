@@ -1,0 +1,34 @@
+# 合成组件工件映射 fixture（仅供 RC 工件工具测试使用，不含任何真实数据/权重）
+schema_version: 1.1.0
+component: battery
+contract_version: component-contract-v1.1.0
+environment:
+  python: "3.12.7"
+  pytorch: 2.5.1+cpu
+  os: Windows-10-10.0.19045-SP0
+  device: cpu
+random_seeds: [42, 20260815]
+commands:
+  - pytest -q
+  - python -m component.predict --telemetry data/telemetry.csv --output /outputs
+public_summary: 合成 fixture 工件：仅供 RC 生成/校验工具测试，不含真实数据或权重。
+reproduce_status: REPRODUCE_OK
+mappings:
+  - local: data
+    payload: 04_数据/battery
+    role: dataset
+    redistributable: true
+    source_url: null
+    processing_provenance: 合成 fixture 生成（tests/fixtures/artifacts），仅用于工具测试
+  - local: checkpoints
+    payload: 03_代码/components/battery/checkpoints
+    role: checkpoint
+    redistributable: false
+    source_url: https://example.com/battery-weights
+    processing_provenance: 合成权重 fixture（tests/fixtures/artifacts），仅用于工具测试
+  - local: results/reference
+    payload: 05_结果/reference/battery
+    role: reference_result
+    redistributable: true
+    source_url: null
+    processing_provenance: 合成结果 fixture（tests/fixtures/artifacts），仅用于工具测试

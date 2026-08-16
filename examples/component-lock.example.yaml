@@ -1,0 +1,28 @@
+# SCHEMA EXAMPLE — NOT A RELEASE LOCK
+# 固定测试值：契约提交 40×a、组件提交 40×b/c/d、工件哈希 64×1/2/3。
+# 真实 component-lock.yaml 只能在 RC 交接时用已验证的 Tag/Commit/工件哈希生成（Task 15），不入版本库。
+schema_version: "1.0.0"
+generated_at: "2026-08-15T00:00:00Z"
+contract:
+  repository: xa-202608-team/xa-contract
+  tag: contract-v1.0.0
+  commit: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+components:
+  battery:
+    repository: xa-202608-team/xa-battery
+    tag: battery-v0.1.0-rc.1
+    commit: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    artifact: battery-artifacts-v0.1.0-rc.1+bbbbbbbb.zip
+    artifact_sha256: "1111111111111111111111111111111111111111111111111111111111111111"
+  phased_array:
+    repository: xa-202608-team/xa-phased-array
+    tag: phased-array-v0.2.0-rc.3
+    commit: "cccccccccccccccccccccccccccccccccccccccc"
+    artifact: phased-array-artifacts-v0.2.0-rc.3+cccccccc.zip
+    artifact_sha256: "2222222222222222222222222222222222222222222222222222222222222222"
+  wheel:
+    repository: xa-202608-team/xa-wheel
+    tag: wheel-v0.3.0-rc.2
+    commit: "dddddddddddddddddddddddddddddddddddddddd"
+    artifact: wheel-artifacts-v0.3.0-rc.2+dddddddd.zip
+    artifact_sha256: "3333333333333333333333333333333333333333333333333333333333333333"
