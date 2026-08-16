@@ -9,7 +9,7 @@
 - 允许列表只包含设计批准的槽位描述文件（config/*.schema.json）与测试
   fixture（tests/fixtures/**），且仅豁免内容类规则，不豁免文件名/产物规则；
 - 槽位描述文件豁免（SLOT_DESC_FILES）：data/results/checkpoints 根目录下
-  设计批准的 7 个槽位描述文件仅豁免 artifact-data-dir 目录规则——豁免的是
+  设计批准的 8 个槽位描述文件仅豁免 artifact-data-dir 目录规则——豁免的是
   "出现在产物目录"这一事实而非文件内容，秘密扫描等内容类规则与其余路径
   规则仍然生效；
 - 被 .gitignore 忽略且未跟踪的文件不会进入公开仓库，工作树扫描跳过；
@@ -95,6 +95,7 @@ SLOT_DESC_FILES: frozenset[str] = frozenset(
         "results/README.md",
         "results/public_summary.json",
         "results/expected_metrics.json",
+        "results/results_manifest.json",
         "checkpoints/README.md",
         "checkpoints/checkpoint_manifest.json",
     }
