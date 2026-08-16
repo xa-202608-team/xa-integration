@@ -1,0 +1,55 @@
+# =============================================================================
+# XA-202608 集成仓顶层 Docker Compose — 相控阵组件 /artifacts + /outputs 契约
+# 依据：设计 §7「运行时挂载契约」（docs/superpowers/specs/
+#       2026-08-16-phased-array-repository-artifact-delivery-design.md）
+#
+# 挂载契约（三挂载点，设计 §7 逐条对应）：
+#   04_数据/phased_array                       -> /artifacts/data:ro        只读输入
+#   03_代码/components/phased_array/checkpoints -> /artifacts/checkpoints:ro 只读输入
+#   05_结果/reproduced/phased_array            -> /outputs                  唯一可写输出
+#
+#   - 容器不得向 /artifacts 写入：两个 :ro 标志在 Compose 层强制；入口脚本只把
+#     运行必需的冻结输入复制到容器内可写工作区，最终 manifest / metrics / run log /
+#     REPRODUCE_OK 只写 /outputs。
+#   - 入口读取层级要求（设计 §7）：/artifacts/data 必须保持交付包工件内部相对
+#     层级，例如 canonical H5 位于
+#       /artifacts/data/features/phased_array/schema_v4/source/mosfet_canonical.h5
+#     不得假定文件直挂 /artifacts/data/ 根（旧交付顶层 Compose 的 /data 直挂
+#     方式与组件新入口不一致，第一次新 RC 装配前须由容器复现测试守护修复）。
+#   - /outputs 只对应 05_结果/reproduced/phased_array：集成复跑输出只允许写
+#     reproduced，不得覆盖 reference（设计 §6）。
+#
+# 构建上下文两种用法（按实际布局二选一）：
+#   用法 A（默认，本地组件仓构建）：
+#     本文件位于 .collaboration-workspace/xa-integration/ 顶层，组件仓为其
+#     兄弟目录 .collaboration-workspace/xa-phased-array/，
+#     故 build: ../xa-phased-array；
+#     交付目录由 assemble_delivery.py 生成在父项目根（.collaboration-workspace
+#     的上一级，与旧 XA-202608_最终交付/ 同级），故卷主机路径前缀为
+#     ../../XA-202608_最终交付-rc.1。
+#   用法 B（交付包内构建）：
+#     将本文件复制进交付包根目录（与 03_代码/ 04_数据/ 05_结果/ 同级）后使用：
+#     build 改为 ./03_代码/components/phased_array，
+#     三个卷主机路径前缀由 ../../XA-202608_最终交付-rc.1 改为 .（例如
+#     ./04_数据/phased_array:/artifacts/data:ro）。
+#
+# 常用命令（镜像 ENTRYPOINT=entrypoint.sh，默认 CMD=verify）：
+#   docker compose build phased_array
+#   docker compose run --rm phased_array verify
+#   docker compose run --rm phased_array reproduce_judge
+#   docker compose run --rm phased_array reproduce_full
+# =============================================================================
+
+services:
+  phased_array:
+    # 用法 A（默认）：本地组件仓构建（集成仓的兄弟目录）
+    # 用法 B：交付包内构建时改为 ./03_代码/components/phased_array
+    build: ../xa-phased-array
+    image: xa-phased-array:integration
+    volumes:
+      # 只读数据工件：容器内保持 04_数据/phased_array 的内部相对层级
+      - ../../XA-202608_最终交付-rc.1/04_数据/phased_array:/artifacts/data:ro
+      # 只读冻结 checkpoint（交付包 03_代码 槽位）
+      - ../../XA-202608_最终交付-rc.1/03_代码/components/phased_array/checkpoints:/artifacts/checkpoints:ro
+      # 唯一可写输出：只对应 reproduced，不得写 reference
+      - ../../XA-202608_最终交付-rc.1/05_结果/reproduced/phased_array:/outputs

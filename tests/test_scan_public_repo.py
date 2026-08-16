@@ -253,13 +253,14 @@ def test_allowlist_does_not_cover_real_data(tmp_path):
 # 槽位描述文件豁免：仅免于 artifact-data-dir 目录规则，内容规则仍然生效
 # ---------------------------------------------------------------------------
 
-# 设计批准的 7 个槽位描述文件（与组件仓库边界测试的批准集合一致）
+# 设计批准的 8 个槽位描述文件（与组件仓库边界测试的批准集合一致）
 SLOT_DESC_FILES_EXPECTED = (
     "data/README.md",
     "data/data_manifest.json",
     "results/README.md",
     "results/public_summary.json",
     "results/expected_metrics.json",
+    "results/results_manifest.json",
     "checkpoints/README.md",
     "checkpoints/checkpoint_manifest.json",
 )
@@ -271,7 +272,7 @@ def test_slot_desc_file_set_matches_design():
 
 
 def test_tracked_slot_desc_files_not_critical(tmp_path):
-    # (a) 7 个槽位描述文件 tracked 不再触发 artifact-data-dir CRITICAL
+    # (a) 8 个槽位描述文件 tracked 不再触发 artifact-data-dir CRITICAL
     _init_git(tmp_path)
     for rel in SLOT_DESC_FILES_EXPECTED:
         f = tmp_path / rel
